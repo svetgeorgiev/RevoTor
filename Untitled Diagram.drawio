@@ -1,1 +1,31 @@
-<mxfile host="app.diagrams.net" modified="2022-10-23T20:03:09.599Z" agent="5.0 (Windows)" version="20.4.0" etag="dWeb-GU0hJpBFIoNz_7r" type="github"><diagram id="a19oZuf2b3frTDkobcE8">UzV2zq1wL0osyPDNT0nNUTV2VTV2LsrPL4GwciucU3NyVI0MMlNUjV1UjYwMgFjVyA2HrCFY1qAgsSg1rwSLBiADYTaQg2Y1AA==</diagram></mxfile>
+<mxfile host="app.diagrams.net" modified="2022-10-23T22:54:38.646Z" agent="5.0 (Windows)" etag="dyscNL9x_nMUfUrM-7eK" version="20.4.0" type="github">
+  <diagram id="a19oZuf2b3frTDkobcE8" name="Page-1">
+    <mxGraphModel dx="1422" dy="752" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="hhVEOVJwXrM4RoYwVkUK-3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="hhVEOVJwXrM4RoYwVkUK-1" target="hhVEOVJwXrM4RoYwVkUK-2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="hhVEOVJwXrM4RoYwVkUK-1" value="(1) ONE PUSH" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="365" y="40" width="120" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="hhVEOVJwXrM4RoYwVkUK-9" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="hhVEOVJwXrM4RoYwVkUK-2" target="hhVEOVJwXrM4RoYwVkUK-8">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="hhVEOVJwXrM4RoYwVkUK-2" value="POWER ON" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="365" y="100" width="120" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="hhVEOVJwXrM4RoYwVkUK-11" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="hhVEOVJwXrM4RoYwVkUK-8" target="hhVEOVJwXrM4RoYwVkUK-10">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="hhVEOVJwXrM4RoYwVkUK-8" value="HOLD FOR 5 sec." style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="510" y="150" width="120" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="hhVEOVJwXrM4RoYwVkUK-10" value="D5 LED&amp;nbsp; ON" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="510" y="210" width="120" height="30" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
