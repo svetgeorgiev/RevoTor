@@ -1,24 +1,33 @@
-#include <SD.h>
-#include <SPI.h>
-#include <Wire.h>
-#include <Servo.h>
-#include <I2Cdev.h>
-#include "BMP085.h"
-#include "MPU6050.h"
-#include "HMC5883L.h"
-#include <PinButton.h>
+#include <SD.h> // Include SD library to log DATA 
+#include <SPI.h> // Include SPI library
+#include <Wire.h> // Include Wire library
+#include <LoRa.h> // Include LoRa library for Radio Transmitting
+#include <Servo.h> // Include Servo library for Wings & Parachute 
+#include <I2Cdev.h> // Include I2Cdev library
+#include "BMP085.h" // Include BMP085 library for Temperature & Pressure readings
+#include "MPU6050.h" // Include MPU6050 library for Orientation
+#include "HMC5883L.h" // Include HMC5883L library for compass
+#include <PinButton.h> // Include PinButton library for ground control Push Button 
+#include <TinyGPSPlus.h> // Include TinyGPS++ library for GPS DATA
+#include <ServoEasing.hpp> // Include ServoEasing library for more precise movement over the servo's
+#include <SoftwareSerial.h> // Include SoftwareSerial library
 
-#include <TinyGPSPlus.h>
-#include <ServoEasing.hpp>
-#include <SoftwareSerial.h>
+#define SCK     13    // GPIO24  - Teensy 4.1 SCK
+#define MISO    12   // GPIO12 - Teensy 4.1 MISO
+#define MOSI    11   // GPIO11 - Teensy 4.1 MOSI
+#define SS      10   // GPIO18 - Teensy 4.1 CS
+#define RST     9   // GPIO14 - Teensy 4.1 RESET
+#define G0     28   // GPIO26 - Teensy 4.1 IRQ(Interrupt Request)
+#define FQ     868E6 // Define Frequency
 
-#define GREEN_LED 12 // GREEN LED
-#define RED_LED 26 // RED LED 
-#define BLUE_LED 31 // BLUE LED 
+#define GREEN_LED 35 // GREEN LED PIN
+#define RED_LED 34 // RED LED PIN
+#define BLUE_LED 33 // BLUE LED PIN
+
 #define LEFT_WING_PIN 41 // Left WING
 #define RIGHT_WING_PIN 40 // Right WING
 
-const int buzzer = 27; // Buzzer
+const int buzzer = 32; // Buzzer
 const int chipSelect = BUILTIN_SDCARD; // Teensy 4.1 BUILDIN_SDCARD
 static const int RXPin = 0, TXPin = 1; // GPS PIN connections
 static const uint32_t GPSBaud = 9600; // GPS Baud Rate 
@@ -29,10 +38,9 @@ TinyGPSPlus gps;  // The TinyGPSPlus object
 SoftwareSerial ss(RXPin, TXPin); // The serial connection to the GPS device
 ServoEasing Left_Wing; // Left Wing Servo Object
 ServoEasing Right_Wing; // Right Wing Servo Object
-PinButton myButton(10); // Mode Switching Button Object
+PinButton myButton(6); // Mode Switching Button Object
 File myFile; // SD card Object
-
-
+  
 // Magnetometer class default I2C address is 0x1E
 // specific I2C addresses may be passed as a parameter here
 // this device only supports one I2C address (0x1E)
@@ -42,10 +50,10 @@ int16_t mx, my, mz;
 // Accel/Gyro class default I2C address is 0x68 (can be 0x69 if AD0 is high)
 // specific I2C addresses may be passed as a parameter here
 MPU6050 accelgyro;
-
 int16_t ax, ay, az;
 int16_t gx, gy, gz;
 int scale = 16384;
+
 // Barometer class default I2C address is 0x77
 // specific I2C addresses may be passed as a parameter here
 // (though the BMP085 supports only one address)
@@ -105,25 +113,24 @@ void setup() {
  // ===================== SD CARD =========================
   Serial.print("Initializing SD card...");
   // see if the card is present and can be initialized:
-  if (!SD.begin(chipSelect)) {
+    while (!SD.begin(chipSelect))
+  {
     Serial.println("Card failed, or not present");
-    Serial.println("Try Again in 5 seconds...");
     digitalWrite(RED_LED, HIGH); // RED LED ON
     digitalWrite(GREEN_LED, LOW); // GREEN LED OFF
-    tone(buzzer, 200); // Make Sound 
+    tone(buzzer, 200); // Make Sound
     delay(750);
-    noTone(buzzer); // Stop sound... 
-    while (1) {
-       // Here put the code were we will try again in 5 seconds
-     }
+    noTone(buzzer); // Stop sound...
+    digitalWrite(RED_LED, LOW); // RED LED ON
+    Serial.println("Try Again in 5 seconds...");
+    delay(5000);
   }
   Serial.println("SD Card Initialized.");
   myFile = SD.open("FlightLog.txt", FILE_WRITE);
   // if the file is available, write to it:
   if (myFile) {
-    myFile.println("=== Time ===  |=== Accel === | === Gyro === | ======= Mag ======= |===== GPS DATA ===== |  ==== GPS DATA ==== | === Barometer === |");
-    myFile.println("   H:M:s      |  X   Y   Z   |  X   Y   Z   |  X   Y   Z  Heading |    LAT      LNG     |    SPEED    ALT     |  Temp   Pressure  |");
-    myFile.close();
+    myFile.println("  time,accelerometer-XYZ,gyroscope-XYZ,magnetometer-XYZ,heading,latitude,longtitude,speed,elevation,temperature,pressure");
+    myFile.close();   
   }
   // if the file isn't open, pop up an error:
   else {
@@ -134,151 +141,50 @@ void setup() {
     delay(750);
     noTone(buzzer); // Stop sound... 
   }
-   // ==================== GPS initialising ============================
+   // ==================== LoRa initialising ============================
+   Serial.print("Starting LoRa Transmitter... ");
+   SPI.begin();
+   LoRa.begin(FQ);
+   LoRa.setPins(SS, RST, G0);
+    if (!LoRa.begin(FQ)) {
+     Serial.println("Starting LoRa failed!");
+    while (1);
+   }
+  Serial.println("connection successfull");
+  Serial.print("Transmitting frequency: "); Serial.println(FQ);
+ // ==================== GPS initialising ============================
   ss.begin(GPSBaud);
 
-  Serial.println("====// Setup Complete //====");
+  Serial.println("Waiting for valid GPS fix...");
+
+  // Keep waiting until the GPS fix is valid
+  while (!gps.location.isValid())
+  {
+    smartDelay(500);
+    Serial.print('.');
+
+    if (millis() > 5000 && gps.charsProcessed() < 10)
+    {
+      Serial.println(F("No GPS data received: check wiring"));
+      while (1) {}
+    }
+  }
+  
+  Serial.println("\n====// Setup Complete //====");
+  tone(buzzer, 1000); // 
+  delay(10);
+  tone(buzzer, 500); // 
+  delay(150);
+  tone(buzzer, 1000); // 
+  delay(200);
+  noTone(buzzer); // Stop sound...
   
   //CLOSE BOTH WINGS
   Left_Wing.write(95); // Left Wing CLOSED
   Right_Wing.write(0); // Right Wing CLOSED
 }
 
-void modeOne() {
-  //CLOSE BOTH WINGS
-  Left_Wing.write(0); // Left Wing OPEN
-  Right_Wing.write(105); // Right Wing OPEN
-  
-  static unsigned long ms = 0;
-  static boolean state = !state;
-
-  // Serial Output Format
-  // === Time ===  |=== Accel === | === Gyro === | ======= Mag ======= |===== GPS DATA ===== |  ==== GPS DATA ==== | === Barometer === |
-  //    H:M:s      |  X   Y   Z   |  X   Y   Z   |  X   Y   Z  Heading |    LAT      LNG     |    SPEED    ALT     |  Temp   Pressure  |
-
-  if (millis() - ms > 100) {
-    printTime(gps.time); // Print GPS TIME
-    Serial.print(": ");
-    accelgyro.getMotion6( & ax, & ay, & az, & gx, & gy, & gz); // read raw accel/gyro measurements
-    // display tab-separated accel/gyro x/y/z values
-    Serial.print(ax / ACCEL_SENS);
-    Serial.print(" / ");
-    Serial.print(ay / ACCEL_SENS);
-    Serial.print(" / ");
-    Serial.print(az / ACCEL_SENS);
-    Serial.print(" , ");
-    Serial.print(gx / GYRO_SENS);
-    Serial.print(" / ");
-    Serial.print(gy / GYRO_SENS);
-    Serial.print(" / ");
-    Serial.print(gz / GYRO_SENS);
-    Serial.print(" , ");
-    
-    // read raw heading measurements
-    mag.getHeading( & mx, & my, & mz);
-
-    // display tab-separated mag x/y/z values
-    Serial.print(mx);
-    Serial.print(" / ");
-    Serial.print(my);
-    Serial.print(" / ");
-    Serial.print(mz);
-    Serial.print(" , ");
-
-    // To calculate heading in degrees. 0 degree indicates North
-    float heading = atan2(my, mx);
-    if (heading < 0) heading += 2 * M_PI;
-    Serial.print(heading * 180 / M_PI);
-    Serial.print(" , ");
-
-    //Display LON & LAT
-    printFloat(gps.location.lat(), gps.location.isValid(), 11, 6);
-    Serial.print(" , "); 
-    printFloat(gps.location.lng(), gps.location.isValid(), 12, 6);
-    Serial.print(", ");
-    
-    //Display SPEED & ALTITUDE
-    printFloat(gps.speed.kmph(), gps.speed.isValid(), 6, 2); //Speed
-    Serial.print(" , ");    
-    printFloat(gps.altitude.meters(), gps.altitude.isValid(), 7, 2); //Altitude    
-    Serial.print(", ");
-    // request temperature
-    barometer.setControl(BMP085_MODE_TEMPERATURE);
-
-    // wait appropriate time for conversion (4.5ms delay)
-    lastMicros = micros();
-    while (micros() - lastMicros < barometer.getMeasureDelayMicroseconds());
-
-    // read calibrated temperature value in degrees Celsius
-    temperature = barometer.getTemperatureC();
-    
-    // request pressure (3x oversampling mode, high detail, 23.5ms delay)
-    barometer.setControl(BMP085_MODE_PRESSURE_3);
-    while (micros() - lastMicros < barometer.getMeasureDelayMicroseconds());
-
-    // read calibrated pressure value in Pascals (Pa)
-    pressure = barometer.getPressure();
-
-    // display measured values if appropriate
-    Serial.print(temperature);
-    Serial.print(" , ");   
-    Serial.print(pressure / 100);
-    Serial.println("\t");
-    ms = millis();
-
-   
-    // write the GY87 values to SD card
-      myFile = SD.open("FlightLog.txt", FILE_WRITE);
-
-      if (myFile) {
-      myFile.print((float) gps.time.hour(), 0); myFile.print(":");
-      myFile.print((float) gps.time.minute(), 0); myFile.print(":"); 
-      myFile.print((float) gps.time.second(), 0); myFile.print(" | ");     
-      myFile.print((float) ax / scale);  myFile.print(" "); 
-      myFile.print((float) ay / scale);  myFile.print(" "); 
-      myFile.print((float) az / scale);  myFile.print(" "); 
-      myFile.print(" , ");
-      myFile.print((float) gx / scale);  myFile.print(" "); 
-      myFile.print((float) gy / scale);  myFile.print(" "); 
-      myFile.print((float) gz / scale);  myFile.print(" "); 
-      myFile.print(" , ");
-      myFile.print((float) mx / scale);  myFile.print(" "); 
-      myFile.print((float) my / scale);  myFile.print(" "); 
-      myFile.print((float) mz / scale);  myFile.print(" "); 
-       myFile.print(" , "); 
-      myFile.print((float) heading * 180 / M_PI); myFile.print(" "); 
-      myFile.print(" , "); 
-      myFile.print((float) gps.location.lat(), 6); myFile.print(" "); 
-      myFile.print((float) gps.location.lng(), 6); 
-      myFile.print(" , ");
-      myFile.print((float) gps.speed.kmph()); 
-      myFile.print(" , ");
-      myFile.print((float) gps.altitude.meters()); 
-      myFile.print(" , ");
-      myFile.print((float) temperature);
-      myFile.print(" , ");
-      myFile.println((float) pressure); 
-      
-      myFile.close();
-    }
-    // blink LED to indicate activity
-    digitalWrite(BLUE_LED, state);
-    state = !state;
-    }
-
-  // Keep waiting until the fix is valid
-   while( !gps.location.isValid() )
-   {
-    smartDelay(500);
-
-    if (millis() > 500 && gps.charsProcessed() < 10)
-      // blink LED to indicate activity
-      digitalWrite(RED_LED, state);
-      state = !state;
-      Serial.println(F("No GPS data received!"));
-   }
-}
-
+ 
 // This custom version of delay() ensures that the gps object is being "fed".
 static void smartDelay(unsigned long ms)
 {
@@ -346,6 +252,163 @@ static void printStr(const char *str, int len)
     Serial.print(i<slen ? str[i] : ' ');
   smartDelay(0);
 } */
+
+
+
+void modeOne() {
+  //CLOSE BOTH WINGS
+  Left_Wing.write(0); // Left Wing OPEN
+  Right_Wing.write(105); // Right Wing OPEN
+  
+  static unsigned long ms = 0;
+  static boolean state = !state;
+
+  // Serial Output Format
+  // === Time ===  |=== Accel === | === Gyro === | ======= Mag ======= |===== GPS DATA ===== |  ==== GPS DATA ==== | === Barometer === |
+  //    H:M:s      |  X   Y   Z   |  X   Y   Z   |  X   Y   Z  Heading |    LAT      LNG     |    SPEED    ALT     |  Temp   Pressure  |
+
+  if (millis() - ms > 100) {
+    printTime(gps.time); // Print GPS TIME
+    Serial.print(" , ");
+    accelgyro.getMotion6( & ax, & ay, & az, & gx, & gy, & gz); // read raw accel/gyro measurements
+    // display tab-separated accel/gyro x/y/z values
+    Serial.print(ax / ACCEL_SENS);
+    Serial.print(" , ");
+    Serial.print(ay / ACCEL_SENS);
+    Serial.print(" , ");
+    Serial.print(az / ACCEL_SENS);
+    Serial.print(" , ");
+    Serial.print(gx / GYRO_SENS);
+    Serial.print(" , ");
+    Serial.print(gy / GYRO_SENS);
+    Serial.print(" , ");
+    Serial.print(gz / GYRO_SENS);
+    Serial.print(" , ");
+    
+    // read raw heading measurements
+    mag.getHeading( & mx, & my, & mz);
+
+    // display tab-separated mag x/y/z values
+    Serial.print(mx);
+    Serial.print(" , ");
+    Serial.print(my);
+    Serial.print(" , ");
+    Serial.print(mz);
+    Serial.print(" , ");
+
+    // To calculate heading in degrees. 0 degree indicates North
+    float heading = atan2(my, mx);
+    if (heading < 0) heading += 2 * M_PI;
+    Serial.print(heading * 180 / M_PI);
+    Serial.print(" , ");
+
+    //Display LON & LAT
+    printFloat(gps.location.lat(), gps.location.isValid(), 11, 6);
+    Serial.print(" , "); 
+    printFloat(gps.location.lng(), gps.location.isValid(), 12, 6);
+    Serial.print(" , ");
+    
+    //Display SPEED & ALTITUDE
+    printFloat(gps.speed.kmph(), gps.speed.isValid(), 6, 2); //Speed
+    Serial.print(" , ");    
+    printFloat(gps.altitude.meters(), gps.altitude.isValid(), 7, 2); //Altitude    
+    Serial.print(" , ");
+    // request temperature
+    barometer.setControl(BMP085_MODE_TEMPERATURE);
+
+    // wait appropriate time for conversion (4.5ms delay)
+    lastMicros = micros();
+    while (micros() - lastMicros < barometer.getMeasureDelayMicroseconds());
+
+    // read calibrated temperature value in degrees Celsius
+    temperature = barometer.getTemperatureC();
+    
+    // request pressure (3x oversampling mode, high detail, 23.5ms delay)
+    barometer.setControl(BMP085_MODE_PRESSURE_3);
+    while (micros() - lastMicros < barometer.getMeasureDelayMicroseconds());
+
+    // read calibrated pressure value in Pascals (Pa)
+    pressure = barometer.getPressure();
+
+    // display measured values if appropriate
+    Serial.print(temperature);
+    Serial.print(" , ");   
+    Serial.print(pressure / 100);
+    Serial.println("\t");
+    ms = millis();
+
+
+   // SD TXT FILE Format
+  // time,accelerometer XYZ,gyroscope XYZ,magnetometer XYZ,heading,latitude,longtitude,speed,elevation,temperature,pressure
+  
+    // write the GY87 values to SD card
+      myFile = SD.open("FlightLog.txt", FILE_WRITE);
+       if (myFile) {
+        myFile.print((float) gps.time.hour(), 0); myFile.print(":");
+        myFile.print((float) gps.time.minute(), 0); myFile.print(":"); 
+        myFile.print((float) gps.time.second(), 0); myFile.print(",");     
+        
+        myFile.print((float) ax / scale);  myFile.print(","); 
+        myFile.print((float) ay / scale);  myFile.print(","); 
+        myFile.print((float) az / scale);  myFile.print(","); 
+     
+        myFile.print((float) gx / scale);  myFile.print(","); 
+        myFile.print((float) gy / scale);  myFile.print(","); 
+        myFile.print((float) gz / scale);  myFile.print(","); 
+     
+        myFile.print((float) mx / scale);  myFile.print(","); 
+        myFile.print((float) my / scale);  myFile.print(","); 
+        myFile.print((float) mz / scale);  myFile.print(","); 
+      
+        myFile.print((float) heading * 180 / M_PI); myFile.print(","); 
+       
+        myFile.print((float) gps.location.lat(), 6); myFile.print(","); 
+        myFile.print((float) gps.location.lng(), 6); myFile.print(","); 
+     
+        myFile.print((float) gps.speed.kmph()); myFile.print(","); 
+        myFile.print((float) gps.altitude.meters()); myFile.print(",");
+      
+        myFile.print((float) temperature); myFile.print(",");
+        myFile.println((float) pressure); 
+        myFile.close();
+    }
+       // LoRa RFM95 Transmitting To Base 
+      LoRa.beginPacket();
+      LoRa.print((float) gps.time.hour(), 0); LoRa.print(":");
+      LoRa.print((float) gps.time.minute(), 0); LoRa.print(":");
+      LoRa.print((float) gps.time.second(), 0); LoRa.print(", ");
+      LoRa.print((float) ax / scale); LoRa.print(", ");
+      LoRa.print((float) ay / scale); LoRa.print(", ");
+      LoRa.print((float) az / scale); LoRa.print(", ");
+      LoRa.print((float) gx / scale); LoRa.print(", ");
+      LoRa.print((float) gy / scale); LoRa.print(", ");
+      LoRa.print((float) gz / scale); LoRa.print(", ");
+      LoRa.print((float) mx / scale); LoRa.print(", ");
+      LoRa.print((float) my / scale); LoRa.print(", ");
+      LoRa.print((float) mz / scale); LoRa.print(", ");
+      LoRa.print((float) heading * 180 / M_PI); LoRa.print(", ");
+      LoRa.print((float) gps.location.lat(), 6); LoRa.print(", ");
+      LoRa.print((float) gps.location.lng(), 6); LoRa.print(", ");
+      LoRa.print(gps.speed.kmph()); LoRa.print(", ");
+      LoRa.print(gps.altitude.meters()); LoRa.print(", ");
+      LoRa.print ((float) temperature); LoRa.print(", ");
+      LoRa.print ((float) pressure);
+      LoRa.endPacket();
+  
+    // blink LED to indicate activity
+    digitalWrite(BLUE_LED, state);
+    state = !state;
+    }
+
+    {
+     smartDelay(250);
+
+     if (millis() > 5000 && gps.charsProcessed() < 10)
+     Serial.println(F("No GPS data received: check wiring"));
+  }
+  
+}
+
 
 
 void modeTwo() {
