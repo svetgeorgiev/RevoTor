@@ -12,17 +12,17 @@
 #include <ServoEasing.hpp> // Include ServoEasing library for more precise movement over the servo's
 #include <SoftwareSerial.h> // Include SoftwareSerial library
 
-#define SCK     13    // GPIO24  - Teensy 4.1 SCK
+#define SCK     13    // GPIO13  - Teensy 4.1 SCK
 #define MISO    12   // GPIO12 - Teensy 4.1 MISO
 #define MOSI    11   // GPIO11 - Teensy 4.1 MOSI
-#define SS      10   // GPIO18 - Teensy 4.1 CS
-#define RST     9   // GPIO14 - Teensy 4.1 RESET
-#define G0     28   // GPIO26 - Teensy 4.1 IRQ(Interrupt Request)
-#define FQ     868E6 // Define Frequency
+#define SS      10   // GPIO10 - Teensy 4.1 CS
+#define RST     9   // GPIO9 - Teensy 4.1 RESET
+#define G0     28   // GPIO28 - Teensy 4.1 IRQ(Interrupt Request)
+#define FQ     8680222E2 // Define Frequency
 
-#define GREEN_LED 35 // GREEN LED PIN
-#define RED_LED 34 // RED LED PIN
-#define BLUE_LED 33 // BLUE LED PIN
+#define RED_LED 33 // RED LED PIN
+#define GREEN_LED 34 // GREEN LED PIN
+#define BLUE_LED 35 // BLUE LED PIN
 
 #define LEFT_WING_PIN 41 // Left WING
 #define RIGHT_WING_PIN 40 // Right WING
@@ -129,7 +129,7 @@ void setup() {
   myFile = SD.open("FlightLog.txt", FILE_WRITE);
   // if the file is available, write to it:
   if (myFile) {
-    myFile.println("  time,accelerometer-XYZ,gyroscope-XYZ,magnetometer-XYZ,heading,latitude,longtitude,speed,elevation,temperature,pressure");
+    myFile.println("time,latitude,longtitude,speed,elevation,accelerometer-XYZ,gyroscope-XYZ,magnetometer-XYZ,heading,temperature,pressure");
     myFile.close();   
   }
   // if the file isn't open, pop up an error:
@@ -162,9 +162,16 @@ void setup() {
   {
     smartDelay(500);
     Serial.print('.');
-
+    //Blink GREEN LED
+    digitalWrite(GREEN_LED, state);
+    state = !state;
     if (millis() > 5000 && gps.charsProcessed() < 10)
     {
+      digitalWrite(RED_LED, HIGH); // RED LED ON
+      digitalWrite(GREEN_LED, LOW); // GREEN LED OFF
+      tone(buzzer, 200); // Make Sound
+      delay(750);
+      noTone(buzzer); // Stop sound... 
       Serial.println(F("No GPS data received: check wiring"));
       while (1) {}
     }
@@ -253,8 +260,6 @@ static void printStr(const char *str, int len)
   smartDelay(0);
 } */
 
-
-
 void modeOne() {
   //CLOSE BOTH WINGS
   Left_Wing.write(0); // Left Wing OPEN
@@ -264,12 +269,24 @@ void modeOne() {
   static boolean state = !state;
 
   // Serial Output Format
-  // === Time ===  |=== Accel === | === Gyro === | ======= Mag ======= |===== GPS DATA ===== |  ==== GPS DATA ==== | === Barometer === |
-  //    H:M:s      |  X   Y   Z   |  X   Y   Z   |  X   Y   Z  Heading |    LAT      LNG     |    SPEED    ALT     |  Temp   Pressure  |
+  // === Time ===   |===== GPS DATA ===== |  ==== GPS DATA ==== |=== Accel === | === Gyro === | ======= Mag ======= | === Barometer === | === Wing Possition === |
+  //    H:M:s       |    LAT      LNG     |    SPEED    ALT     |  X   Y   Z   |  X   Y   Z   |  X   Y   Z  Heading |  Temp   Pressure  | LPOS RPOS PITCH° ROLL° 
 
   if (millis() - ms > 100) {
     printTime(gps.time); // Print GPS TIME
-    Serial.print(" , ");
+    Serial.print("> ");
+    //Display LON & LAT
+    printFloat(gps.location.lat(), gps.location.isValid(), 11, 6);
+    Serial.print(", "); 
+    printFloat(gps.location.lng(), gps.location.isValid(), 12, 6);
+    Serial.print(", ");
+    
+    //Display SPEED & ALTITUDE
+    printFloat(gps.speed.kmph(), gps.speed.isValid(), 6, 2); //Speed
+    Serial.print(", ");    
+    printFloat(gps.altitude.meters(), gps.altitude.isValid(), 7, 2); //Altitude    
+    Serial.print(", ");
+    
     accelgyro.getMotion6( & ax, & ay, & az, & gx, & gy, & gz); // read raw accel/gyro measurements
     // display tab-separated accel/gyro x/y/z values
     Serial.print(ax / ACCEL_SENS);
@@ -301,18 +318,13 @@ void modeOne() {
     if (heading < 0) heading += 2 * M_PI;
     Serial.print(heading * 180 / M_PI);
     Serial.print(" , ");
-
-    //Display LON & LAT
-    printFloat(gps.location.lat(), gps.location.isValid(), 11, 6);
-    Serial.print(" , "); 
-    printFloat(gps.location.lng(), gps.location.isValid(), 12, 6);
+    // display both wings possition format LPOS RPOS PITCH° ROLL°
+    Serial.print("LwP-");
+    Serial.print(Left_Wing.read());
     Serial.print(" , ");
-    
-    //Display SPEED & ALTITUDE
-    printFloat(gps.speed.kmph(), gps.speed.isValid(), 6, 2); //Speed
-    Serial.print(" , ");    
-    printFloat(gps.altitude.meters(), gps.altitude.isValid(), 7, 2); //Altitude    
-    Serial.print(" , ");
+    Serial.print("RwP-");  
+    Serial.print(Right_Wing.read());
+    Serial.print(" , ");  
     // request temperature
     barometer.setControl(BMP085_MODE_TEMPERATURE);
 
@@ -334,19 +346,24 @@ void modeOne() {
     Serial.print(temperature);
     Serial.print(" , ");   
     Serial.print(pressure / 100);
-    Serial.println("\t");
-    ms = millis();
-
-
-   // SD TXT FILE Format
-  // time,accelerometer XYZ,gyroscope XYZ,magnetometer XYZ,heading,latitude,longtitude,speed,elevation,temperature,pressure
+    Serial.print("\t");
+    Serial.println(" | "); 
+     ms = millis();
+      // SD TXT FILE Format
+      // time,accelerometer XYZ,gyroscope XYZ,magnetometer XYZ,heading,latitude,longtitude,speed,elevation,lwp,rwp,temperature,pressure
   
-    // write the GY87 values to SD card
+      // write the GY87 values to SD card
       myFile = SD.open("FlightLog.txt", FILE_WRITE);
        if (myFile) {
         myFile.print((float) gps.time.hour(), 0); myFile.print(":");
         myFile.print((float) gps.time.minute(), 0); myFile.print(":"); 
         myFile.print((float) gps.time.second(), 0); myFile.print(",");     
+        
+        myFile.print((float) gps.location.lat(), 6); myFile.print(","); 
+        myFile.print((float) gps.location.lng(), 6); myFile.print(","); 
+     
+        myFile.print((float) gps.speed.kmph()); myFile.print(","); 
+        myFile.print((float) gps.altitude.meters()); myFile.print(",");
         
         myFile.print((float) ax / scale);  myFile.print(","); 
         myFile.print((float) ay / scale);  myFile.print(","); 
@@ -361,13 +378,10 @@ void modeOne() {
         myFile.print((float) mz / scale);  myFile.print(","); 
       
         myFile.print((float) heading * 180 / M_PI); myFile.print(","); 
-       
-        myFile.print((float) gps.location.lat(), 6); myFile.print(","); 
-        myFile.print((float) gps.location.lng(), 6); myFile.print(","); 
-     
-        myFile.print((float) gps.speed.kmph()); myFile.print(","); 
-        myFile.print((float) gps.altitude.meters()); myFile.print(",");
-      
+
+        myFile.print("LwP:"); myFile.print(Left_Wing.read()); myFile.print(",");
+        myFile.print("RwP:"); myFile.print(Right_Wing.read()); myFile.print(",");
+        
         myFile.print((float) temperature); myFile.print(",");
         myFile.println((float) pressure); 
         myFile.close();
@@ -377,6 +391,10 @@ void modeOne() {
       LoRa.print((float) gps.time.hour(), 0); LoRa.print(":");
       LoRa.print((float) gps.time.minute(), 0); LoRa.print(":");
       LoRa.print((float) gps.time.second(), 0); LoRa.print(", ");
+      LoRa.print((float) gps.location.lat(), 6); LoRa.print(", ");
+      LoRa.print((float) gps.location.lng(), 6); LoRa.print(", ");
+      LoRa.print(gps.speed.kmph()); LoRa.print(", ");
+      LoRa.print(gps.altitude.meters()); LoRa.print(", ");
       LoRa.print((float) ax / scale); LoRa.print(", ");
       LoRa.print((float) ay / scale); LoRa.print(", ");
       LoRa.print((float) az / scale); LoRa.print(", ");
@@ -387,19 +405,17 @@ void modeOne() {
       LoRa.print((float) my / scale); LoRa.print(", ");
       LoRa.print((float) mz / scale); LoRa.print(", ");
       LoRa.print((float) heading * 180 / M_PI); LoRa.print(", ");
-      LoRa.print((float) gps.location.lat(), 6); LoRa.print(", ");
-      LoRa.print((float) gps.location.lng(), 6); LoRa.print(", ");
-      LoRa.print(gps.speed.kmph()); LoRa.print(", ");
-      LoRa.print(gps.altitude.meters()); LoRa.print(", ");
+      LoRa.print("LwP: "); LoRa.print(Left_Wing.read()); LoRa.print(", ");
+      LoRa.print("RwP: "); LoRa.print(Right_Wing.read()); LoRa.print(", ");
       LoRa.print ((float) temperature); LoRa.print(", ");
       LoRa.print ((float) pressure);
       LoRa.endPacket();
-  
+
+
     // blink LED to indicate activity
     digitalWrite(BLUE_LED, state);
     state = !state;
     }
-
     {
      smartDelay(250);
 
@@ -429,30 +445,57 @@ void modeTwo() {
 
   //OPEN BOTH WINGS
   Left_Wing.write(0); // Left Wing OPEN
+    Serial.print("LwP-");
+    Serial.print(Left_Wing.read());
+    Serial.print(" , ");
   Right_Wing.write(105); // Right Wing OPEN
-
+    Serial.print("RwP-");  
+    Serial.println(Right_Wing.read());
   delay(2000);
 
-  //TEST LEFT WING
+  //TEST LEFT WING'
+  Serial.println("Left Wing Test");
   Left_Wing.write(0); // Left Wing OPEN
-  delay(500);
+      Serial.print("LwP-");
+      Serial.print(Left_Wing.read());
+      Serial.print(" , ");
+  delay(2500);
   Left_Wing.write(95); // Left Wing CLOSED
-  delay(500);
+      Serial.print("LwP-");
+      Serial.print(Left_Wing.read());
+      Serial.print(" , ");
+  delay(2500);
   Left_Wing.write(0); // Left Wing OPEN
-  delay(1000);
+      Serial.print("LwP-");
+      Serial.println(Left_Wing.read());
+  delay(3000);
 
   //TEST RIGHT WING
+  Serial.println("Right Wing Test");
   Right_Wing.write(105); // Right Wing OPEN
-  delay(500); 
+    Serial.print("RwP-");  
+    Serial.print(Right_Wing.read());
+    Serial.print(" , ");
+  delay(2500); 
   Right_Wing.write(0); // Right  Wing CLOSED
-  delay(500);
+    Serial.print("RwP-");  
+    Serial.print(Right_Wing.read());
+    Serial.print(" , ");
+  delay(2500);
   Right_Wing.write(105); // Right Wing OPEN
-  delay(500);
+    Serial.print("RwP-");  
+    Serial.println(Right_Wing.read());
+  delay(3000);
 
   //CLOSE BOTH WINGS
+  Serial.println("Close Wings");
   Left_Wing.write(95); // Left Wing CLOSED
+    Serial.print("LwP-");  
+    Serial.print(Left_Wing.read());
+    Serial.print(" , ");
   Right_Wing.write(0); // Right Wing CLOSED
-  
+    Serial.print("RwP-");  
+    Serial.println(Right_Wing.read());
   tone(buzzer, 1000); // 
   delay(10);
   tone(buzzer, 500); // 
