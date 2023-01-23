@@ -66,11 +66,34 @@ float temperature;
 float pressure;
 int32_t lastMicros;
 
+// Batery Level Function
+int8_t getBatteryLevel()
+{
+  Wire1.beginTransmission(0x77);
+  Wire1.write(0x78);
+  if (Wire1.endTransmission(false) == 0
+   && Wire1.requestFrom(0x77, 1)) {
+    switch (Wire1.read() & 0xF0) {
+    case 0xE0: return 25;
+    case 0xC0: return 50;
+    case 0x80: return 75;
+    case 0x00: return 100;
+    default: return 0;
+    }
+  }
+  return -1;
+}
+
 
 void setup() {
   
-  // join I2C bus (I2Cdev library doesn't do this automatically)
- Wire.begin();
+ // join I2C bus (I2Cdev library doesn't do this automatically)
+  Wire.setSCL(19);  // SCL on first i2c bus on T4.1
+  Wire.setSDA(18);  // SDA on first i2c bus on T4.1
+  Wire1.setSCL(16); // SCL1 on second i2c bus on T4.1
+  Wire1.setSDA(17); // SDA1 on second i2c bus on T4.1
+  Wire.begin();
+  Wire1.begin();
  Wire.setClock(400000); 
       
   boolean state = HIGH;
@@ -81,7 +104,11 @@ void setup() {
   Serial.begin(115200);
   ss.begin(GPSBaud);
   digitalWrite(LED, HIGH);
-
+  // ==================== Battery Level  ============================
+  Serial.print("Battery Level: ");
+  Serial.print(getBatteryLevel());
+  Serial.print("%\n");
+ 
   // ===================== SD CARD =========================
   Serial.print("Initializing SD card...");
   // see if the card is present and can be initialized:
@@ -116,7 +143,7 @@ void setup() {
   barometer.initialize();
   Serial.print("Testing Pressure...  ");
   Serial.println(barometer.testConnection() ? "BMP085 connection successful" : "BMP085 connection failed");
- 
+  
   // ==================== LoRa initialising ============================
    Serial.print("Starting LoRa Transmitter... ");
    SPI.begin();
@@ -174,8 +201,8 @@ void modeOne() {
   static boolean state = HIGH;
 
   // Serial Output Format
-  //  ====== GPS ====== | === Accel === | === Gyro === | ======= Mag ======= | === Barometer === |
-  //TIME  LAT  LNG  ALT |  X   Y   Z   |  X   Y   Z   |  X   Y   Z  Heading |  Temp   Pressure   |
+  //  ====== GPS ====== | === Accel === | === Gyro === | ======= Mag ======= | === Barometer === | ===  BATT  === |
+  //TIME  LAT  LNG  ALT |  X   Y   Z   |  X   Y   Z   |  X   Y   Z  Heading |  Temp   Pressure   | 100/75/50/25/0 |
 
   if (millis() - ms > 100) {
     
@@ -250,8 +277,13 @@ void modeOne() {
     Serial.print(temperature);
     Serial.print(" | ");
     Serial.print(pressure / 100);
-    Serial.println("\t");
-  
+    Serial.print(" | ");
+
+    // display battery in procentage
+    Serial.print(getBatteryLevel());
+    Serial.println("%\t");
+
+    
    // Recording the sama data from the Serial to the SD card 
     myFile = SD.open("FlightLog.csv", FILE_WRITE);
     if (myFile) {
@@ -294,7 +326,9 @@ void modeOne() {
 
       myFile.print((float) temperature);
       myFile.print(",");
-      myFile.println((float) pressure);
+      myFile.print((float) pressure);
+      myFile.print(",");
+      myFile.println(getBatteryLevel());
       myFile.close();
 
       ms = millis();
@@ -322,7 +356,8 @@ void modeOne() {
       LoRa.print((float) mz ); LoRa.print(", ");
       LoRa.print((float) heading * 180/M_PI ); LoRa.print(", ");
       LoRa.print ((float) temperature); LoRa.print(", ");
-      LoRa.println ((float) pressure);
+      LoRa.print ((float) pressure); LoRa.print(", ");
+      LoRa.print ((float) getBatteryLevel()); LoRa.println("%");
       LoRa.endPacket();
  
   }
