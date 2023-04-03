@@ -1,0 +1,27 @@
+#	####################################################
+#	SYNTAX HIGHLIGHTING FOR LIBRARY:
+#	Battery_Shield
+#	####################################################
+#	DATA TYPES: 							   (KEYWORD1)
+	Battery_Shield	KEYWORD1
+#	####################################################
+#	METHODS AND FUNCTIONS:					   (KEYWORD2)
+	begin	KEYWORD2
+	off	KEYWORD2
+	charging	KEYWORD2
+	getLevel	KEYWORD2
+	getState	KEYWORD2
+	amperemeter	KEYWORD2
+	voltmeter	KEYWORD2
+	ohmmeter	KEYWORD2
+	efficiency	KEYWORD2
+#	####################################################
+#	CONSTANTS:								   (LITERAL1)
+	BATTERY	        LITERAL1
+	BATTERY_IDLE	LITERAL1
+	RESISTOR	    LITERAL1
+	CHARGING_IDLE	LITERAL1
+	CHARGING_TK	    LITERAL1
+	CHARGING_CC	    LITERAL1
+	CHARGING_CV	    LITERAL1
+	CHARGING_TO	    LITERAL1
