@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+    <meta name="generator" content="Hugo 0.104.2">
+    <title>GROUND MODE</title>
+
+<!-- Bootstrap 5.2 link from getbootstrap -->   
+<link href="https://getbootstrap.com/docs/5.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+<!-- Font Awesome CDN link -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Favicons -->
+<link rel="apple-touch-icon" href="https://getbootstrap.com/docs/5.2/assets/img/favicons/apple-touch-icon.png" sizes="180x180">
+<link rel="icon" href="https://getbootstrap.com/docs/5.2/assets/img/favicons/favicon-32x32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="https://getbootstrap.com/docs/5.2/assets/img/favicons/favicon-16x16.png" sizes="16x16" type="image/png">
+<link rel="manifest" href="https://getbootstrap.com/docs/5.2/assets/img/favicons/manifest.json">
+<link rel="mask-icon" href="https://getbootstrap.com/docs/5.2/assets/img/favicons/safari-pinned-tab.svg" color="#712cf9">
+<link rel="icon" href="https://www.revotorsys.com/assets/revotor_logo_dark.png">
+<meta name="theme-color" content="#712cf9">
+<meta http-equiv="Content-Type" content="text/javascript">
+<style> 
+.artificial-horizon {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius:0px;
+}
+
+.sky {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 50%;
+  background-color: #87CEEB;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+}
+
+.ground {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 50%;
+  background-color: #AD841F;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+}
+
+.pitch {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  border-top: 1px solid white;
+  border-bottom: 1px solid white;
+}
+
+.roll {
+  position: absolute;
+  top: -5px;
+  left: 50%;
+  width: 5px;
+  height: 10px;
+  background-color: white;
+  transform-origin: center;
+  border-radius: 10px;
+}
+
+.line {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 1px;
+  height: 10px;
+  background-color: white;
+  transform-origin: bottom;
+}
+
+</style>
+</head>
+  <body>
+    
+<main>
+  <div class="container py-4">
+  <header class="pb-3 mb-4 border-bottom">
+    <div class="d-flex justify-content-between align-items-center">
+      <a href="/" class="d-flex align-items-center text-dark text-decoration-none">
+        <img src="https://www.revotorsys.com/assets/revotor_logo_dark.png" width="45" height="40" class="me-2" role="img">
+        <span class="fs-3">RevoTOR Pilot R1</span>
+      </a>
+      <div class="text-end">
+        <span class="fs-6">Battery: </span>
+      </div>
+    </div>
+  </header>
+
+   
+<div class="p-0 mb-3 bg-light rounded-3" id="map" style="height: 500px; width: 100%;"></div>
+
+
+
+<!-- Include the OpenLayers library -->
+<script src="https://cdn.rawgit.com/openlayers/openlayers.github.io/master/en/v6.5.0/build/ol.js"></script>
+
+<!-- Initialize the map using the OpenLayers library -->
+<script>
+  var mapCenter = ol.proj.fromLonLat([0.1572864, 52.3538942 ]);
+
+  var map = new ol.Map({
+    target: 'map',
+    layers: [
+      new ol.layer.Tile({
+        source: new ol.source.OSM(),
+      })
+    ],
+    view: new ol.View({
+      center: mapCenter,
+      zoom: 10,
+    }),
+  });
+
+  var marker = new ol.Feature({
+    geometry: new ol.geom.Point(mapCenter),
+  });
+
+  var iconStyle = new ol.style.Style({
+  image: new ol.style.Icon({
+    anchor: [0.5, 1],
+    src: 'https://openlayers.org/en/latest/examples/data/icon.png',
+  })
+ });
+
+  marker.setStyle(iconStyle);
+
+  var vectorSource = new ol.source.Vector({
+    features: [marker]
+  });
+
+  var vectorLayer = new ol.layer.Vector({
+    source: vectorSource
+  });
+
+  map.addLayer(vectorLayer);
+</script>
+
+
+<div class="row align-items-md-stretch">
+  <div class="col-md-6">
+      <div class="artificial-horizon">
+        <div class="sky"></div>
+        <div class="ground"></div>
+        <div class="pitch">
+          <div class="roll"></div>
+
+        </div>
+      </div>
+  </div>
+  <div class="col-md-6">
+    <div class="p-3 mb-2 bg- rounded-3">
+      <h2 class="display-6 text-center fw-bold"><i class="fa-solid fa-circle-info"></i> Vehicle Information</h2>
+      <div class="table-responsive">
+        <table class="table">
+          <tbody>
+            <tr>
+              <th>Vehicle Type:</th>
+              <td>Weather Balloon</td>
+            </tr>
+            <tr>
+              <th>Vehicle Status:</th>
+              <td>GROUND MODE</td>
+            </tr>
+            <tr>
+              <th>Current Lat/Long:</th>
+              <td>37.7749° N, 122.4194° W</td>
+            </tr>
+			<tr>
+              <th>Accelerometer:</th>
+              <td>00 00 00 ft</td>
+            </tr>
+            <tr>
+              <th>Gyroscope:</th>
+              <td>00 00 00</td>
+            </tr>
+			<tr>
+              <th>Speed:</th>
+              <td>0 kM/H</td>
+            </tr>
+            <tr>
+              <th>Altitude:</th>
+              <td>32 m</td>
+            </tr>
+            <tr>
+              <th>Temperature:</th>
+              <td>25°C</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+    <footer class="pt-3 mt-4 text-muted border-top">
+      RevoTOR Systems &copy; 2023
+    </footer>
+  </div>
+</main>
+
+
+    
+  </body>
+</html>
