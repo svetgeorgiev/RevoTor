@@ -24,6 +24,7 @@ The current example contains:
  
 ![Power_PCB](PCB's/power_pcb_2.png)
 
+For more info visit our Discord Server at: https://discord.gg/HCXPvBpP
 <hr size="1">
 
 **RevoTOR Control Module** 
@@ -33,3 +34,5 @@ The current example contains:
 - x2 Stepper Motor's
  
 ![Control_PCB](PCB's/pilot_control_pcb.png)
+
+For more info visit our Discord Server at: https://discord.gg/HCXPvBpP
