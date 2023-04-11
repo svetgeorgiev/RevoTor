@@ -1,21 +1,35 @@
- _______     ________  ____   ____   ___    _________    ___   _______      
-|_   __ \   |_   __  ||_  _| |_  _|.'   `. |  _   _  | .'   `.|_   __ \     
-  | |__) |    | |_ \_|  \ \   / / /  .-.  \|_/ | | \_|/  .-.  \ | |__) |    
-  |  __ /     |  _| _    \ \ / /  | |   | |    | |    | |   | | |  __ /     
- _| |  \ \_  _| |__/ |    \ ' /   \  `-'  /   _| |_   \  `-'  /_| |  \ \_   
-|____| |___||________|     \_/     `.___.'   |_____|   `.___.'|____| |___|  
-                                                                            
-  ______  ____  ____   ______   _________  ________  ____    ____   ______   
-.' ____ \|_  _||_  _|.' ____ \ |  _   _  ||_   __  ||_   \  /   _|.' ____ \  
-| (___ \_| \ \  / /  | (___ \_||_/ | | \_|  | |_ \_|  |   \/   |  | (___ \_| 
- _.____`.   \ \/ /    _.____`.     | |      |  _| _   | |\  /| |   _.____`.  
-| \____) |  _|  |_   | \____) |   _| |_    _| |__/ | _| |_\/_| |_ | \____) | 
- \______.' |______|   \______.'  |_____|  |________||_____||_____| \______.'                                                                             
-                                                                            
-                                                                            
-                                                                            
-
-DIY Hobby - Flight Computers / Power Modules / Control Modules 
+                                                                         
+ <h1 align="center"><img src="https://revotorsys.com/assets/logo.png" width="350" height="75"></h1>                                                                          <h2 align="center">DIY Hobby - Flight Computers -Power Modules - Control Modules </h2>
 
 
-Main.ino - main flight computer for weather balloon 
+Main.ino - Weather Balloon Flight Computer - 
+
+Current example contains: 
+
+- Teensy 4.1 - MCU 
+- LoRa RFM95W - Telemetry
+- uBlox M10Q - GPS 
+- BMP085 - Barometer
+- MPU6050 - Accelerometer / Gyrosocpe
+- HMC5883L - Magnetometer / Compass
+
+<hr size="1">
+
+**RevoTOR Power Module** 
+
+- x5 - 3.3V power supply
+- x5 - 5v power supply 
+- x2 18650 batteries
+- I2C communication with MCU 
+ 
+![Power_PCB](PCB's/power_pcb_2.png)
+
+<hr size="1">
+
+**RevoTOR Control Module** 
+
+- x4 Servo's 
+- x2 DC Motor's 
+- x2 Stepper Motor's
+ 
+![Control_PCB](PCB's/pilot_control_pcb.png)
