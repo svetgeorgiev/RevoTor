@@ -1,3 +1,9 @@
-# RevoTor Systems - Weather Balloons & Model Rockets & other Unmanned Vehicles 
+# 
+░█▀▀█ ░█▀▀▀ ░█──░█ ░█▀▀▀█ ▀▀█▀▀ ░█▀▀▀█ ░█▀▀█ 　 ░█▀▀▀█ ░█──░█ ░█▀▀▀█ ▀▀█▀▀ ░█▀▀▀ ░█▀▄▀█ ░█▀▀▀█ 
+░█▄▄▀ ░█▀▀▀ ─░█░█─ ░█──░█ ─░█── ░█──░█ ░█▄▄▀ 　 ─▀▀▀▄▄ ░█▄▄▄█ ─▀▀▀▄▄ ─░█── ░█▀▀▀ ░█░█░█ ─▀▀▀▄▄ 
+░█─░█ ░█▄▄▄ ──▀▄▀─ ░█▄▄▄█ ─░█── ░█▄▄▄█ ░█─░█ 　 ░█▄▄▄█ ──░█── ░█▄▄▄█ ─░█── ░█▄▄▄ ░█──░█ ░█▄▄▄█
+
+DIY Hobby - Flight Computers / Power Modules / Control Modules 
+
 
 Main.ino - main flight computer for weather balloon 
