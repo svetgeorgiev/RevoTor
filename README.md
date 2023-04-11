@@ -2,15 +2,15 @@
  <h1 align="center"><img src="https://revotorsys.com/assets/logo.png" width="350" height="75"></h1>                                                                          <h2 align="center">DIY Hobby - Flight Computers -Power Modules - Control Modules </h2>
 
 
-Main.ino - Weather Balloon Flight Computer - 
+Teensy 4.1 Flight Computer -> main.ino and main_simple.ino - Weather Balloon Flight Computer - 
 
-Current example contains: 
+The current example contains: 
 
 - Teensy 4.1 - MCU 
 - LoRa RFM95W - Telemetry
 - uBlox M10Q - GPS 
 - BMP085 - Barometer
-- MPU6050 - Accelerometer / Gyrosocpe
+- MPU6050 - Accelerometer / Gyroscope
 - HMC5883L - Magnetometer / Compass
 
 <hr size="1">
@@ -28,7 +28,7 @@ Current example contains:
 
 **RevoTOR Control Module** 
 
-- x4 Servo's 
+- x4 Servo'
 - x2 DC Motor's 
 - x2 Stepper Motor's
  
