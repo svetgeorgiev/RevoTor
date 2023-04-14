@@ -15,18 +15,25 @@
       <link rel='mask-icon' href='https://getbootstrap.com/docs/5.2/assets/img/favicons/safari-pinned-tab.svg' color='#712cf9'>
       <link rel='icon' href='https://www.revotorsys.com/assets/revotor_logo_dark.png'>
       <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.css'>
-      <script src='https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.js'></script><script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.2.1/chart.min.js'></script>
+      <script src='https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.js'></script>
    </head>
    <body>
       <main>
          <div class='container py-4'>
-            <header class='pb-3 mb-4 border-bottom'>
-               <div class='d-flex justify-content-between align-items-center'>
-                  <a href='/' class='d-flex align-items-center text-dark text-decoration-none'><img src='https://www.revotorsys.com/assets/revotor_logo.png' width='350' height='75' role='logo'></a>
-                  <div class='text-center'><span class='fs-4 fw-bold' id='mode'><i class='fa-solid fa-terminal'></i>{MODE}</span></div>
-                  <div class='text-end'><span class='fs-3' id='battery'><i class='fa-solid fa-car-battery'></i> : {BATTERY}<span><br><span class='fs-3'><i class='fa-solid fa-satellite-dish'></i> : </span></div>
-               </div>
-            </header>
+<header class='pb-3 mb-4  fs-4 fw-bold border-bottom'>
+  <div class='d-flex justify-content-between align-items-center'>
+    <a href='/' class='d-flex align-items-center text-dark text-decoration-none'>
+      <img src='https://www.revotorsys.com/assets/revotor_logo.png' width='350' height='75' role='logo'>
+    </a>
+    <div class='text-center'>
+      <i class='fas fa-terminal fs-4 fw-bold'></i> : <span class='fs-4 fw-bold' id='mode'>{MODE}</span>
+    </div>
+    <div class='text-end'>
+      <i class='fas fa-car-battery'></i>  : <span id='battery'>{BATTERY_LEVEL}%</span><br>
+      <i class='fas fa-satellite-dish'></i> : <span id='sats'>{SATS}</span>
+    </div>
+  </div>
+</header>
 
     <div class='p-5 mb-4 bg-light rounded-3'>
       <div class='container-fluid py-5'>
@@ -50,6 +57,11 @@
 </html>
 
 <script>
-    var mode = parseFloat('{currentMode}'),
-    var battery = parseFloat('{batteryLevel}'); 
+  var mode = String('{MODE}');
+  var battery = parseInt('{BATTERY_LEVEL}');
+  var satellites = parseInt('{SATS}');
+  
+  document.getElementById('mode').innerHTML = mode;
+  document.getElementById('battery').innerHTML = battery + '%';
+  document.getElementById('sats').innerHTML = satellites;
 </script>
