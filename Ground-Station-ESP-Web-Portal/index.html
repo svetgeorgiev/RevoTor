@@ -1,55 +1,50 @@
 <!doctype html>
 <html lang='en'>
-  <head>
-    <meta charset='utf-8'>
-    <meta name='viewport' content='width=device-width, initial-scale=1'>
-    <meta name='description' content=''>
-    <meta name='author' content='Mark Otto, Jacob Thornton, and Bootstrap contributors'>
-    <meta name='generator' content='Hugo 0.104.2'>
-    <title>RevoTOR Pilot R1 - Dashboard</title>
-
-<!-- Bootstrap 5.2 link from getbootstrap -->   
-<link href='https://getbootstrap.com/docs/5.2/dist/css/bootstrap.min.css' rel='stylesheet' integrity='sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65' crossorigin='anonymous'>
-<!-- Font Awesome CDN link -->
-<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' integrity='sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==' crossorigin='anonymous' referrerpolicy='no-referrer' />
-    <!-- Favicons -->
-<link rel='apple-touch-icon' href='https://getbootstrap.com/docs/5.2/assets/img/favicons/apple-touch-icon.png' sizes='180x180'>
-<link rel='icon' href='https://getbootstrap.com/docs/5.2/assets/img/favicons/favicon-32x32.png' sizes='32x32' type='image/png'>
-<link rel='icon' href='https://getbootstrap.com/docs/5.2/assets/img/favicons/favicon-16x16.png' sizes='16x16' type='image/png'>
-<link rel='manifest' href='https://getbootstrap.com/docs/5.2/assets/img/favicons/manifest.json'>
-<link rel='mask-icon' href='https://getbootstrap.com/docs/5.2/assets/img/favicons/safari-pinned-tab.svg' color='#712cf9'>
-<link rel='icon' href='https://www.revotorsys.com/assets/revotor_logo_dark.png'>
-<meta name='theme-color' content='#712cf9'>
-</head>
-  <body>
-    
-<main>
-  <div class='container py-4'>
-  <header class='pb-3 mb-4 border-bottom'>
-    <div class='d-flex justify-content-between align-items-center'>
-      <a href='/' class='d-flex align-items-center text-dark text-decoration-none'>
-        <img src='https://www.revotorsys.com/assets/revotor_logo.png' width='350' height='75' role='logo'></a>
-      <div class='text-end'>
-        <span class='fs-6'>Battery:</span>
-      </div>
-    </div>
-  </header>
-
-    <div class='p-5 mb-4 bg-light rounded-3'>
-      <div class='container-fluid py-5'>
-        <h1 class='display-5 fw-bold text-center'><i class='fa-brands fa-galactic-senate fa-beat-fade'></i> ACTIVATE VEHICLE</h1>
-        <p class='col-md-12 mt-4 fs-4'>Press 'MODE' button to ACTIVATE vehicle. Once you pressed the button the LED will glow in purple indicating 'GROUND 
-		MODE'.</p>
-      </div>
-    </div>
-
-    <footer class='pt-3 mt-4 text-muted border-top'>
-      RevoTOR Systems &copy; 2023
-    </footer>
-  </div>
-</main>
-
-
-    
-  </body>
+   <head>
+      <meta charset='utf-8'>
+      <meta name='viewport' content='width=device-width, initial-scale=1'>
+      <meta name='description' content='Dashboard'>
+      <title>Activate Vehicle</title>
+      <link rel='stylesheet' href='https://revotorsys.com/css/custom.css'/>
+      <link href='https://getbootstrap.com/docs/5.2/dist/css/bootstrap.min.css' rel='stylesheet' integrity='sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65' crossorigin='anonymous'>
+      <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' integrity='sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==' crossorigin='anonymous' referrerpolicy='no-referrer' />
+      <link rel='apple-touch-icon' href='https://getbootstrap.com/docs/5.2/assets/img/favicons/apple-touch-icon.png' sizes='180x180'>
+      <link rel='icon' href='https://getbootstrap.com/docs/5.2/assets/img/favicons/favicon-32x32.png' sizes='32x32' type='image/png'>
+      <link rel='icon' href='https://getbootstrap.com/docs/5.2/assets/img/favicons/favicon-16x16.png' sizes='16x16' type='image/png'>
+      <link rel='manifest' href='https://getbootstrap.com/docs/5.2/assets/img/favicons/manifest.json'>
+      <link rel='mask-icon' href='https://getbootstrap.com/docs/5.2/assets/img/favicons/safari-pinned-tab.svg' color='#712cf9'>
+      <link rel='icon' href='https://www.revotorsys.com/assets/revotor_logo_dark.png'>
+      <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.css'>
+      <script src='https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.js'></script><script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.2.1/chart.min.js'></script>
+   </head>
+   <body>
+      <main>
+         <div class='container py-4'>
+            <header class='pb-3 mb-4 border-bottom'>
+               <div class='d-flex justify-content-between align-items-center'>
+                  <a href='/' class='d-flex align-items-center text-dark text-decoration-none'><img src='https://www.revotorsys.com/assets/revotor_logo.png' width='350' height='75' role='logo'></a>
+                  <div class='text-center'><span class='fs-4 fw-bold' id='mode'><i class='fa-solid fa-terminal'></i>{MODE}</span></div>
+                  <div class='text-end'><span class='fs-3' id='battery'><i class='fa-solid fa-car-battery'></i> : {BATTERY}<span><br><span class='fs-3'><i class='fa-solid fa-satellite-dish'></i> : </span></div>
+               </div>
+            </header>
+            <div class='p-5 mb-4 bg-light rounded-3'>
+               <div class='container-fluid py-5'>
+                  <h1 class='display-5 fw-bold text-center'><i class='fa-regular fa-circle-dot fa-beat'></i> ACTIVATE VEHICLE</h1>
+                  <p class='col-md-12 mt-4'>
+                  <div class='alert alert-info mt-5 mb-5 d-flex align-items-center' role='alert'>
+                     <i class='fa-solid fa-circle-info fs-1 me-5'></i>
+                     <blockquote class='m-0 fs-6'> Press the MODE button to ACTIVATE the vehicle. <br> Once you pressed the button the LED will glow in PURPLE indicating 'GROUND MODE'. <br> Press again to switch from GROUND to TEST mode (BLUE LED). <br> Press Again to switch from TEST to FLIGHT mode (GREEN LED) </blockquote>
+                  </div>
+                  </p>
+               </div>
+            </div>
+            <footer class='pt-3 mt-4 text-muted border-top'> RevoTOR Systems © 2023 </footer>
+         </div>
+      </main>
+   </body>
 </html>
+
+<script>
+    var mode = parseFloat('{currentMode}'),
+    var battery = parseFloat('{batteryLevel}'); 
+</script>
