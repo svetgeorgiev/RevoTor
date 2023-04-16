@@ -4,7 +4,7 @@
       <meta charset='utf-8'>
       <meta name='viewport' content='width=device-width, initial-scale=1'>
       <meta name='description' content='Dashboard'>
-      <title>Activate Vehicle</title>
+      <title>Activate Vehicle - RevoTOR Systems</title>
       <link rel='stylesheet' href='https://revotorsys.com/css/custom.css'/>
       <link href='https://getbootstrap.com/docs/5.2/dist/css/bootstrap.min.css' rel='stylesheet' integrity='sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65' crossorigin='anonymous'>
       <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' integrity='sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==' crossorigin='anonymous' referrerpolicy='no-referrer' />
@@ -21,7 +21,8 @@
    <body>
       <main>
          <div class='container py-4'>
-<header class='pb-3 mb-4  fs-4 fw-bold border-bottom'>
+		 
+<header class='pb-3 mb-4 fs-4 fw-bold border-bottom'>
   <div class='d-flex justify-content-between align-items-center'>
     <a href='/' class='d-flex align-items-center text-dark text-decoration-none'>
       <img src='https://www.revotorsys.com/assets/revotor_logo.png' width='350' height='75' role='logo'>
@@ -29,23 +30,33 @@
     <div class='text-center'>
       <i class='fas fa-terminal fs-4 fw-bold'></i> : <span class='fs-4 fw-bold' id='mode'>{MODE}</span>
     </div>
-    <div class='text-end'>
-      <i class='fas fa-car-battery'></i>  : <span id='battery'>{BATTERY_LEVEL}%</span><br>
-      <i class='fas fa-satellite-dish'></i> : <span id='sats'>{SATS}</span>
+    <div class='text-start align-items-center'>
+     <i class='fas fa-car-battery'></i> : <span id='battery'>{BATTERY_LEVEL}%</span><br>
+     <i class='fas fa-satellite-dish'></i> : <span id='sats'>{SATS}</span>
     </div>
   </div>
 </header>
-            <div class='p-5 mb-4 bg-light rounded-3'>
-               <div class='container-fluid py-5'>
-                  <h1 class='display-5 fw-bold text-center'><i class='fa-regular fa-circle-dot fa-beat'></i> ACTIVATE VEHICLE</h1>
-                  <p class='col-md-12 mt-4'>
-                  <div class='alert alert-info mt-5 mb-5 d-flex align-items-center' role='alert'>
-                     <i class='fa-solid fa-circle-info fs-1 me-5'></i>
-                     <blockquote class='m-0 fs-6'> Press the MODE button to ACTIVATE the vehicle. <br> Once you pressed the button the LED will glow in PURPLE indicating 'GROUND MODE'. <br> Press again to switch from GROUND to TEST mode (BLUE LED). <br> Press Again to switch from TEST to FLIGHT mode (GREEN LED) </blockquote>
-                  </div>
-                  </p>
-               </div>
-            </div>
+	
+
+<div class='p-5 mb-4 bg-light rounded-3'>
+   <div class='container-fluid py-5 mx-auto'>
+      <h1 class='display-5 fw-bold text-center'><i class='fa-regular fa-circle-dot fa-beat'></i> ACTIVATE VEHICLE</h1>
+<div class='row'>
+  <div class='col-md-1 mt-0'></div>
+  <div class='col-md-10 mt-0 align-items-center'>
+    <div class='alert alert-info mt-5 mb-5 d-flex align-items-center' role='alert'>
+      <i class='fa-solid fa-circle-info fs-1 me-5'></i>
+      <blockquote class='m-0 fs-6'> Press the MODE button to ACTIVATE the vehicle. <br>
+	  Once you pressed the button the LED will glow in PURPLE indicating 'GROUND MODE'. <br>
+	  Press again to switch from GROUND to TEST mode (BLUE LED). <br> Press again to switch from TEST to FLIGHT mode (GREEN LED) </blockquote>
+    </div>
+  </div>
+  <div class='col-md-1 mt-0'></div>
+</div>
+
+   </div>
+</div>
+
             <footer class='pt-3 mt-4 text-muted border-top'> RevoTOR Systems © 2023 </footer>
          </div>
       </main>
