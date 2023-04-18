@@ -4,18 +4,13 @@
       <meta charset='utf-8'>
       <meta name='viewport' content='width=device-width, initial-scale=1'>
       <meta name='description' content='Dashboard'>
-      <title>FLIGHT MODE  - RevoTOR Systems</title>
       <link rel='stylesheet' href='https://revotorsys.com/css/custom.css'/>
-      <link href='https://getbootstrap.com/docs/5.2/dist/css/bootstrap.min.css' rel='stylesheet' integrity='sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65' crossorigin='anonymous'>
-      <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' integrity='sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==' crossorigin='anonymous' referrerpolicy='no-referrer' />
-      <link rel='apple-touch-icon' href='https://getbootstrap.com/docs/5.2/assets/img/favicons/apple-touch-icon.png' sizes='180x180'>
-      <link rel='icon' href='https://getbootstrap.com/docs/5.2/assets/img/favicons/favicon-32x32.png' sizes='32x32' type='image/png'>
-      <link rel='icon' href='https://getbootstrap.com/docs/5.2/assets/img/favicons/favicon-16x16.png' sizes='16x16' type='image/png'>
-      <link rel='manifest' href='https://getbootstrap.com/docs/5.2/assets/img/favicons/manifest.json'>
-      <link rel='mask-icon' href='https://getbootstrap.com/docs/5.2/assets/img/favicons/safari-pinned-tab.svg' color='#712cf9'>
-      <link rel='icon' href='https://www.revotorsys.com/assets/revotor_logo_dark.png'>
+      <link rel='stylesheet' href='https://getbootstrap.com/docs/5.2/dist/css/bootstrap.min.css'/>
+      <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css'/>
+      <link rel='icon' href='https://revotorsys.com/assets/favico.ico'>
       <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.css'>
       <script src='https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.js'></script>
+	  <title>Flight Mode - RevoTOR Systems</title>
    </head>
    <body>
       <main>
@@ -40,7 +35,7 @@
                   <p class='col-md-12 mt-4'>
                   <div class='alert alert-danger mt-5 mb-5 d-flex align-items-center justify-content-center text-center' role='alert'>
                      <i class='fa-solid fa-circle-exclamation fs-2'></i>
-                     <blockquote class='m-4 fs-2'> Ground Station Web Portal will SHUTDOWN in <span id='countdown'>10:00</span></blockquote>
+                     <blockquote class='m-4 fs-2'> Ground Station Web Portal will SHUTDOWN in <span id='countdown'>{COUNTDOWN_TEXT}</span></blockquote>
                   </div>
                   </p>
                </div>
@@ -73,8 +68,10 @@ setInterval(function() {
   var mode = String('{MODE}');
   var battery = parseInt('{BATTERY_LEVEL}');
   var satellites = parseInt('{SATS}');
+  var countdownText = parseFloat('{COUNTDOWN_TEXT}');
   
       document.getElementById('mode').innerHTML = mode;
       document.getElementById('battery').innerHTML = battery + '%';
       document.getElementById('sats').innerHTML = satellites;
+	  document.getElementById('countdown').innerHTML = countdownText;
 </script>
