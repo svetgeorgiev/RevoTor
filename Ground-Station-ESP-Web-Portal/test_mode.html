@@ -35,15 +35,22 @@
 <table class='table mt-5'>
     <thead>
         <tr>
-            <th class='text-center'><i class='fa-solid fa-fan fa-spin fa-spin'></i> Left DC Motor</th>
+		    <th class='text-center'><i class='fa-solid fa-gear fa-spin'></i> L Stepper</th>
+            <th class='text-center'><i class='fa-solid fa-fan fa-spin fa-spin'></i> L DC Motor</th>
 			<th class='text-center'><i class='fa-solid fa-gamepad'></i> Rule</th>
-            <th class='text-center'><i class='fa-solid fa-fan fa-spin fa-spin-reverse'></i> Right DC Motor</th>
-			<th class='text-center'><i class='fa-solid fa-gear fa-spin'></i> Left Stepper Motor</th>
-            <th class='text-center'><i class='fa-solid fa-gear fa-spin fa-spin-reverse'></i> Right Stepper Motor</th>
+            <th class='text-center'><i class='fa-solid fa-fan fa-spin fa-spin-reverse'></i> R DC Motor</th>
+			<th class='text-center'><i class='fa-solid fa-gear fa-spin fa-spin-reverse'></i> R Stepper</th>
         </tr>
     </thead>
     <tbody>
         <tr>
+  
+<td>
+    <div class='d-flex justify-content-center'>
+        <input type='text' class='left-stepper' data-width='120' data-height='120'>
+    </div>
+</td>
+
 <td>
     <div class='d-flex justify-content-center'>
         <input type='text' class='left-motor' data-width='190' data-height='190'>
@@ -63,15 +70,10 @@
          <input type='text' class='right-motor' data-width='190' data-height='190'>
     </div>
 </td>
-  
+
 <td>
     <div class='d-flex justify-content-center'>
-        <input type='text' class='left-stepper' data-width='190' data-height='190'>
-    </div>
-</td>
-<td>
-    <div class='d-flex justify-content-center'>
-       <input type='text' class='right-stepper' data-width='190' data-height='190'>
+       <input type='text' class='right-stepper' data-width='120' data-height='120'>
     </div>
 </td>
         </tr>
