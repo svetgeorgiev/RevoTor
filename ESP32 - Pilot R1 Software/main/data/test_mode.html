@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang='en'>
+   <head>
+      <meta charset='utf-8'>
+      <meta name='viewport' content='width=device-width, initial-scale=1'>
+      <meta name='description' content='Dashboard'>
+      <link rel='stylesheet' href='https://revotorsys.com/css/custom.css'/>
+      <link rel='stylesheet' href='https://getbootstrap.com/docs/5.2/dist/css/bootstrap.min.css'/>
+      <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css'/>
+      <link rel='icon' href='https://revotorsys.com/assets/favico.ico'>
+      <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.css'>
+      <script src='https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.js'></script>
+	  <title>Test Mode - RevoTOR Systems</title>
+<script>
+function updateData() {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      var data = JSON.parse(this.responseText);
+      document.getElementById('sats').innerHTML = data.sats;
+      document.getElementById('battery').innerHTML = data.battery + '%';
+    }
+  };
+  xhttp.open('GET', '/data', true);
+  xhttp.send();
+}
+
+// Call the updateData function every 1 second
+setInterval(updateData, 1000);
+</script>
+   </head>
+   <body>
+      <main>
+         <div class='container py-4'>
+<header class='pb-3 mb-4 fs-4 fw-bold border-bottom'>
+  <div class='d-flex justify-content-between align-items-center'>
+    <a href='/' class='d-flex align-items-center text-dark text-decoration-none'>
+      <img src='https://www.revotorsys.com/assets/revotor_logo.png' width='350' height='75' role='logo'>
+    </a>
+    <div class='text-center'>
+      <i class='fas fa-terminal fs-4 fw-bold'></i> : <span class='fs-4 fw-bold' id='mode'>{MODE}</span>
+    </div>
+    <div class='text-start align-items-center'>
+     <i class='fas fa-car-battery'></i> : <span id='battery'>{BATTERY_LEVEL}%</span><br>
+     <i class='fas fa-satellite-dish'></i> : <span id='sats'>{SATS}</span>
+    </div>
+  </div>
+</header>
+    <div class='p-5 mb-4 bg-light rounded-3'>
+      <div class='container-fluid py-0'>
+        <h1 class='display-5 fw-bold text-center mt-0'><i class='fa-solid fa-screwdriver-wrench'></i> TEST Control Dashboard <button class='btn btn-primary btn-sm btn-reset mb-2 mt-0'><i class='fa-solid fa-rotate-right'></i></button></h1>
+<table class='table mt-5'>
+    <thead>
+        <tr>
+		    <th class='text-center'><i class='fa-solid fa-gear fa-spin'></i> L Stepper</th>
+            <th class='text-center'><i class='fa-solid fa-fan fa-spin fa-spin'></i> L DC Motor</th>
+			<th class='text-center'><i class='fa-solid fa-gamepad'></i> Rule</th>
+            <th class='text-center'><i class='fa-solid fa-fan fa-spin fa-spin-reverse'></i> R DC Motor</th>
+			<th class='text-center'><i class='fa-solid fa-gear fa-spin fa-spin-reverse'></i> R Stepper</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+  
+<td>
+    <div class='d-flex justify-content-center'>
+        <input type='text' class='left-stepper' data-width='120' data-height='120'>
+    </div>
+</td>
+
+<td>
+    <div class='d-flex justify-content-center'>
+        <input type='text' class='left-motor' data-width='190' data-height='190'>
+    </div>
+</td>
+
+<td align='center'>
+
+<input type='range' class='form-control-range motor-position' data-motor='1' min='0' max='100' step='1' value='0'>  
+<input type='range' class='form-control-range motor-position2' data-motor='1' min='0' max='100' step='1' value='50'>  
+
+
+</td>
+  
+<td>
+    <div class='d-flex justify-content-center'>
+         <input type='text' class='right-motor' data-width='190' data-height='190'>
+    </div>
+</td>
+
+<td>
+    <div class='d-flex justify-content-center'>
+       <input type='text' class='right-stepper' data-width='120' data-height='120'>
+    </div>
+</td>
+        </tr>
+    </tbody>
+			<tr>
+			<td></td>
+		<td></td>
+		</tr>
+</table>
+		
+<table class='table mt-5'>
+  <thead>
+    <tr>
+      <th class='text-center'>Servo</th>
+      <th class='text-center'>Position</th>
+      <th class='text-center'>Current Position</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class='text-center'>Servo 1</td>
+      <td class='text-center'>
+        <input type='range' class='form-control-range servo-position' data-servo='1' min='0' max='180' step='1' value='90'>
+      </td>
+      <td class='text-center'><span class='current-position' data-servo='1'>90</span></td>
+      <td class='text-center'><button class='btn btn-success btn-on' data-servo='1'><i class='fa-solid fa-toggle-on'></i></button>
+                        	  <button class='btn btn-danger btn-off' data-servo='1'><i class='fa-solid fa-toggle-off'></i></button>
+							  <button class='btn btn-primary btn-send' data-servo='1'>Send</button> </td>
+    </tr>
+    <tr>
+      <td class='text-center'>Servo 2</td>
+      <td class='text-center'>
+        <input type='range' class='form-control-range servo-position' data-servo='2' min='0' max='180' step='1' value='90'>
+      </td>
+      <td class='text-center'><span class='current-position' data-servo='2'>90</span></td>
+      <td class='text-center'><button class='btn btn-success btn-on' data-servo='2'><i class='fa-solid fa-toggle-on'></i></button>
+                        	  <button class='btn btn-danger btn-off' data-servo='2'><i class='fa-solid fa-toggle-off'></i></button>
+							  <button class='btn btn-primary btn-send' data-servo='2'>Send</button> </td>
+    </tr>
+    <tr>
+      <td class='text-center'>Servo 3</td>
+      <td class='text-center'>
+        <input type='range' class='form-control-range servo-position' data-servo='3' min='0' max='180' step='1' value='90'>
+      </td>
+      <td class='text-center'><span class='current-position' data-servo='3'>90</span></td>
+      <td class='text-center'><button class='btn btn-success btn-on' data-servo='3'><i class='fa-solid fa-toggle-on'></i></button> 
+	                          <button class='btn btn-danger btn-off' data-servo='3'><i class='fa-solid fa-toggle-off'></i></button>
+							  <button class='btn btn-primary btn-send' data-servo='3'>Send</button> </td>
+    </tr>
+    <tr>
+      <td class='text-center'>Servo 4</td>
+      <td class='text-center'>
+        <input type='range' class='form-control-range servo-position' data-servo='4' min='0' max='180' step='1' value='90'>
+      </td>
+      <td class='text-center'><span class='current-position' data-servo='4'>90</span></td>
+      <td class='text-center'><button class='btn btn-success btn-on' data-servo='4'><i class='fa-solid fa-toggle-on'></i></button>
+                        	  <button class='btn btn-danger btn-off' data-servo='4'><i class='fa-solid fa-toggle-off'></i></button>
+							  <button class='btn btn-primary btn-send' data-servo='4'>Send</button> </td>
+							  
+    </tr>
+  </tbody>
+</table>
+
+
+            </div>
+</div>
+            <footer class='pt-3 mt-4 text-muted border-top'> RevoTOR Systems © 2023 </footer>
+         </div>
+      </main>
+   </body>
+</html>
+
+<script src='https://code.jquery.com/jquery-3.2.1.slim.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js'></script>
+<script src='https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js'></script>
+<script src='https://cdn.jsdelivr.net/jquery.knob/1.2.13/jquery.knob.min.js'></script>
+
+<script>
+$(function() {
+  $('.left-motor').knob({
+    'draw' : function () { 
+      $(this.i).val(this.cv + '%');
+    }
+  });
+  
+  $('.right-motor').knob({
+    'draw' : function () { 
+      $(this.i).val(this.cv + '%');
+    }
+  });
+
+  // Set initial value to 0%
+  $('.left-motor, .right-motor').val(0).trigger('change');
+  
+  // Listen for changes on the slider
+  $('.motor-position').on('input', function() {
+    var value = $(this).val();
+    
+    // Update both left and right motors
+    $('.left-motor, .right-motor').val(value).trigger('change');
+  });
+  
+  // Listen for changes on the second slider
+  $('.motor-position2').on('input', function() {
+    var value = $(this).val();
+    var midpoint = 50;
+    
+    // Calculate the difference from the midpoint
+    var diff = value - midpoint;
+    
+    // Calculate the new values for the left and right motors
+    var leftValue = midpoint + diff;
+    var rightValue = midpoint - diff;
+    
+    // Update the left and right motors
+    $('.left-motor').val(leftValue).trigger('change');
+    $('.right-motor').val(rightValue).trigger('change');
+  });
+  
+  // Listen for clicks on the reset button
+  $('.btn-reset').on('click', function() {
+    $('.left-motor, .right-motor').val(0).trigger('change');
+    $('.motor-position').val(0);
+    $('.motor-position2').val(50);
+  });
+});
+
+$(function() {
+  $('.left-stepper').knob({
+    'min': -10,
+    'max': 10,
+    'step': 1,
+    'draw' : function () { 
+      $(this.i).val(this.cv);
+    },
+    'displayInput': true
+  });
+  
+  $('.right-stepper').knob({
+    'min': -10,
+    'max': 10,
+    'step': 1,
+    'draw' : function () { 
+      $(this.i).val(this.cv);
+    },
+    'displayInput': true
+  });
+
+  // Set initial value to 0
+  $('.left-stepper, .right-stepper').val(0).trigger('change');
+});
+  // Listen for clicks on the reset button
+  $('.btn-reset').on('click', function() {
+    $('.left-stepper, .right-stepper').val(0).trigger('change');
+  });
+
+// Send position value to your servo motor
+$('.btn-send').click(function() {
+  var servo = $(this).data('servo');
+  var position = $('.servo-position[data-servo=\'' + servo + '\']').val();
+  $('.current-position[data-servo=\'' + servo + '\']').text(position);
+  // TODO: send position value to your servo motor
+  $('.servo-slider[data-servo=\'' + servo + '\']').val(position);
+});
+
+// Fully open the servo
+$('.btn-on').click(function() {
+  var servo = $(this).data('servo');
+  var position = 180;
+  $('.current-position[data-servo=\'' + servo + '\']').text(position);
+  // TODO: send position value to your servo motor
+  $('.servo-position[data-servo=\'' + servo + '\']').val(position);
+  $('.servo-slider[data-servo=\'' + servo + '\']').val(position);
+});
+
+// Fully close the servo
+$('.btn-off').click(function() {
+  var servo = $(this).data('servo');
+  var position = 0;
+  $('.current-position[data-servo=\'' + servo + '\']').text(position);
+  // TODO: send position value to your servo motor
+  $('.servo-position[data-servo=\'' + servo + '\']').val(position);
+  $('.servo-slider[data-servo=\'' + servo + '\']').val(position);
+});
+
+// Update slider according to position
+$('.servo-position').on('input', function() {
+  var servo = $(this).data('servo');
+  var position = $(this).val();
+  $('.current-position[data-servo=\'' + servo + '\']').text(position);
+  $('.servo-slider[data-servo=\'' + servo + '\']').val(position);
+});
+
+</script>
+
+    
+  </body>
+</html>

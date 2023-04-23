@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang='en'>
+   <head>
+      <meta charset='utf-8'>
+      <meta name='viewport' content='width=device-width, initial-scale=1'>
+      <meta name='description' content='Dashboard'>
+      <link rel='stylesheet' href='https://revotorsys.com/css/custom.css'/>
+      <link rel='stylesheet' href='https://getbootstrap.com/docs/5.2/dist/css/bootstrap.min.css'/>
+      <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css'/>
+      <link rel='icon' href='https://revotorsys.com/assets/favico.ico'>
+	  <title>Flight Mode - RevoTOR Systems</title>
+<script>
+function updateData() {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      var data = JSON.parse(this.responseText);
+      document.getElementById('sats').innerHTML = data.sats;
+      document.getElementById('battery').innerHTML = data.battery + '%';
+    }
+  };
+  xhttp.open('GET', '/data', true);
+  xhttp.send();
+}
+
+// Call the updateData function every 1 second
+setInterval(updateData, 1000);
+</script>
+   </head>
+   <body>
+      <main>
+         <div class='container py-4'>
+<header class='pb-3 mb-4 fs-4 fw-bold border-bottom'>
+  <div class='d-flex justify-content-between align-items-center'>
+    <a href='/' class='d-flex align-items-center text-dark text-decoration-none'>
+      <img src='https://www.revotorsys.com/assets/revotor_logo.png' width='350' height='75' role='logo'>
+    </a>
+    <div class='text-center'>
+      <i class='fas fa-terminal fs-4 fw-bold'></i> : <span class='fs-4 fw-bold' id='mode'>{MODE}</span>
+    </div>
+    <div class='text-start align-items-center'>
+     <i class='fas fa-car-battery'></i> : <span id='battery'>{BATTERY_LEVEL}%</span><br>
+     <i class='fas fa-satellite-dish'></i> : <span id='sats'>{SATS}</span>
+    </div>
+  </div>
+</header>
+            <div class='p-5 mb-4 bg-light rounded-3'>
+               <div class='container-fluid py-5'>
+                  <h1 class='display-5 fw-bold text-center text-success'><i class='fa-solid fa-triangle-exclamation fa-beat-fade'></i> FLIGHT MODE - ACTIVATED</h1>
+                  <p class='col-md-12 mt-4'>
+              <!-- CONTENT HERE -->
+                  </p>
+               </div>
+            </div>
+            <footer class='pt-3 mt-4 text-muted border-top'> RevoTOR Systems © 2023 </footer>
+         </div>
+      </main>
+   </body>
+</html>
+
+
+
+
