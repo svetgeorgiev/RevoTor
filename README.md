@@ -4,7 +4,7 @@
 
 Teensy 4.1 Flight Computer -> main.ino and main_simple.ino - Weather Balloon Flight Computer - 
 
-The current example contains: 
+The current CODE example contains: 
 
 - Teensy 4.1 - MCU 
 - LoRa RFM95W - Telemetry
@@ -12,6 +12,8 @@ The current example contains:
 - BMP085 - Barometer
 - MPU6050 - Accelerometer / Gyroscope
 - HMC5883L - Magnetometer / Compass
+
+15/11/2023 - We Are Updating the Test Codes for each component like GPS, Gyroscope, LoRa etc... Soon to update the Main CODE.
 
 <hr size="1">
 
