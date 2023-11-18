@@ -13,7 +13,29 @@ The current CODE example contains:
 - MPU6050 - Accelerometer / Gyroscope
 - HMC5883L - Magnetometer / Compass
 
+
+
 15/11/2023 - We Are Updating the Test Codes for each component like GPS, Gyroscope, LoRa etc... Soon to update the Main CODE.
+
+
+**RevoTOR PilotR1 Flight Computer** 
+
+- 3.3v power input
+- USB C programmer
+- ESP32 WROOM-32 MCU
+- BOSCH IMU - BMI088
+- BOSCH BMM 150 Magnetometer 
+- BOSCH BMP581 Pressure sensor 
+- uBlox MAX-m10s-00B GPS 
+- LoRa RFM95W 
+- microSD Card Slot
+- RGB Status LED 
+- Mode Push Button  
+ 
+![Power_PCB](PCB's/pilot_pcb_1.jpg)
+![Power_PCB](PCB's/pilot_pcb_2.jpg)
+![Power_PCB](PCB's/pilot_pcb_3.jpg)
+For more info visit our Discord Server at: https://discord.gg/HCXPvBpP
 
 <hr size="1">
 
